@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Info Getter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <h1>Music Info Getter</h1>
+
+        <section class="settings-section">
+            <h2>画像スタイル設定</h2>
+
+            <div class="setting-group">
+                <label class="setting-label">背景</label>
+                <div class="segmented-control">
+                    <input type="radio" id="bg-blurred" name="backgroundStyle" value="blurredArtwork" checked>
+                    <label for="bg-blurred">ぼかし</label>
+
+                    <input type="radio" id="bg-color" name="backgroundStyle" value="averageColor">
+                    <label for="bg-color">単色</label>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">アスペクト比</label>
+                <div class="segmented-control">
+                    <input type="radio" id="ar-3-4" name="aspectRatio" value="threeToFour" checked>
+                    <label for="ar-3-4">3:4</label>
+
+                    <input type="radio" id="ar-9-16" name="aspectRatio" value="nineToSixteen">
+                    <label for="ar-9-16">9:16</label>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label class="setting-label">フォント</label>
+                <div class="segmented-control">
+                    <input type="radio" id="font-standard" name="fontStyle" value="standard" checked>
+                    <label for="font-standard">標準フォント</label>
+                </div>
+            </div>
+        </section>
+
+        <section class="input-section">
+            <h2>Apple Music URL</h2>
+            <div class="url-input-group">
+                <input type="url" id="itemURL" placeholder="アルバム・曲のURLを入力">
+                <button type="button" id="pasteButton">ペースト</button>
+            </div>
+        </section>
+
+        <section class="action-section">
+            <button type="submit" id="generateButton">画像を作成してコピー</button>
+        </section>
+
+        <div id="statusMessage" class="status-message"></div>
+
+        <div class="result-container">
+            <img id="resultImage" alt="生成された画像">
+        </div>
+
+        <canvas id="imageCanvas" style="display: none;"></canvas>
+    </main>
+    
+    <canvas id="imageCanvas" style="display: none;"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>

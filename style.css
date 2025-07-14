@@ -1,0 +1,159 @@
+/* --- 全体の基本スタイル --- */
+body {
+    /* iOSやmacOSで使われている標準フォントを指定して、アプリらしい見た目に */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f0f2f5; /* 少しグレーがかった背景色 */
+    color: #333; /* デフォルトの文字色を少し柔らかく */
+    margin: 0; /* ブラウザが自動でつける余白をリセット */
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* --- メインコンテンツのスタイル --- */
+main {
+    background-color: #ffffff; /* 白いカードのように見せる */
+    padding: 20px 30px;
+    border-radius: 12px; /* 角を丸くする */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 浮き上がって見えるように影をつける */
+    width: 100%;
+    max-width: 500px; /* PCでも見やすいように最大幅を指定 */
+}
+
+/* --- 見出しのスタイル --- */
+h1 {
+    text-align: center; /* 中央揃え */
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 16px;
+    color: #666;
+    border-bottom: 1px solid #e5e5e5; /* 区切り線を入れる */
+    padding-bottom: 8px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* --- 設定項目一行のスタイル --- */
+.setting-group {
+    display: flex; /* 要素を横並びにする */
+    align-items: center; /* 上下中央に揃える */
+    justify-content: space-between; /* ラベルとコントロールを両端に配置 */
+    margin-bottom: 20px;
+    gap: 15px; /* 要素間の隙間 */
+}
+
+/* --- セグメント化されたコントロール（ラジオボタンの見た目） --- */
+.segmented-control {
+    display: flex; /* 中のラベルを横並びに */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden; /* 角丸からはみ出た部分を隠す */
+}
+
+/* ラジオボタン本体は見えなくする（これがトリック！） */
+.segmented-control input[type="radio"] {
+    display: none;
+}
+
+/* ラジオボタンのラベルをボタンのように見せる */
+.segmented-control label {
+    padding: 8px 16px;
+    cursor: pointer; /* マウスカーソルを指の形にする */
+    transition: background-color 0.2s; /* 背景色が0.2秒で滑らかに変わる */
+    border-left: 1px solid #ddd; /* 選択肢の間の区切り線 */
+    color: #007aff;
+    font-size: 14px;
+}
+
+/* 最初の選択肢には左の区切り線は不要 */
+.segmented-control label:first-of-type {
+    border-left: none;
+}
+
+/* ★★★ 選択されているラジオボタンの隣のラベルのスタイル ★★★ */
+.segmented-control input[type="radio"]:checked + label {
+    background-color: #007aff; /* Appleの標準的な青色 */
+    color: white; /* 文字を白く */
+}
+
+/* --- QRコードのチェックボックスを少し大きく --- */
+.setting-group input[type="checkbox"] {
+    transform: scale(1.2); /* 少し大きくしてタップしやすくする */
+}
+
+
+/* --- URL入力欄のグループ --- */
+.url-input-group {
+    display: flex; /* 入力欄とボタンを横並びに */
+    gap: 10px; /* 隙間を空ける */
+}
+
+input[type="url"] {
+    flex-grow: 1; /* 横幅いっぱいまで伸びてスペースを埋める */
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* --- ボタンの共通スタイル --- */
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    font-weight: 500; /* 文字の太さ */
+}
+
+/* ボタンにマウスが乗った時のスタイル */
+button:hover {
+    filter: brightness(0.9); /* 少し暗くして反応しているように見せる */
+}
+
+/* ボタンを押した瞬間のスタイル */
+button:active {
+    transform: scale(0.98); /* 少し小さくする */
+}
+
+/* --- ペーストボタンの個別スタイル --- */
+#pasteButton {
+    background-color: #e9e9eb; /* 背景をグレーに */
+    color: #007aff; /* 文字を青に */
+}
+
+/* --- 作成ボタンの個別スタイル --- */
+#generateButton {
+    width: 100%; /* 横幅いっぱいに */
+    padding-top: 14px;
+    padding-bottom: 14px;
+    background-color: #007aff; /* 目立つ青色 */
+    color: white;
+    font-weight: bold; /* 文字を太字に */
+    margin-top: 10px;
+}
+
+/* --- ステータスメッセージのスタイル --- */
+.status-message {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    height: 20px; /* メッセージがなくても高さを確保してレイアウトが崩れないように */
+}
+
+/* --- 生成された画像の表示エリア --- */
+.result-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+#resultImage {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none; /* 最初は非表示にしておく */
+}
