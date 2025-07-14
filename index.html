@@ -3,19 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Info Getter</title>
+    <title>Music Share - Apple Music画像生成</title>
+    <meta name="description" content="Apple MusicのURLからカスタマイズ可能な画像を生成するアプリ">
+    <meta name="theme-color" content="#007aff">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="icon-192.png">
 </head>
 <body>
     <main>
         <h1>Music Share</h1>
 
-        <section class="settings-section">
-            <h2>画像スタイル設定</h2>
+        <section class="settings-section" role="region" aria-labelledby="settings-title">
+            <h2 id="settings-title">画像スタイル設定</h2>
 
             <div class="setting-group">
-                <label class="setting-label">背景</label>
-                <div class="segmented-control">
+                <label class="setting-label" for="bg-blurred">背景</label>
+                <div class="segmented-control" role="radiogroup" aria-labelledby="settings-title">
                     <input type="radio" id="bg-blurred" name="backgroundStyle" value="blurredArtwork" checked>
                     <label for="bg-blurred">アートワーク</label>
 
@@ -25,8 +29,8 @@
             </div>
 
             <div class="setting-group">
-                <label class="setting-label">アスペクト比</label>
-                <div class="segmented-control">
+                <label class="setting-label" for="ar-3-4">アスペクト比</label>
+                <div class="segmented-control" role="radiogroup" aria-labelledby="settings-title">
                     <input type="radio" id="ar-3-4" name="aspectRatio" value="threeToFour" checked>
                     <label for="ar-3-4">3:4</label>
 
@@ -36,36 +40,43 @@
             </div>
 
             <div class="setting-group">
-                <label class="setting-label">フォント</label>
-                <div class="segmented-control">
+                <label class="setting-label" for="font-standard">フォント</label>
+                <div class="segmented-control" role="radiogroup" aria-labelledby="settings-title">
                     <input type="radio" id="font-standard" name="fontStyle" value="standard" checked>
                     <label for="font-standard">標準フォント</label>
                 </div>
             </div>
         </section>
 
-        <section class="input-section">
-            <h2>Apple Music URL</h2>
+        <section class="input-section" role="region" aria-labelledby="input-title">
+            <h2 id="input-title">Apple Music URL</h2>
             <div class="url-input-group">
-                <input type="url" id="itemURL" placeholder="アルバム・曲のURLを入力">
-                <button type="button" id="pasteButton">ペースト</button>
+                <input type="url" id="itemURL" placeholder="アルバム・曲のURLを入力" aria-describedby="url-help">
+                <button type="button" id="pasteButton" aria-label="クリップボードからURLをペースト">ペースト</button>
             </div>
+            <div id="url-help" class="help-text">Apple Musicのアルバムまたは曲のURLを入力してください</div>
         </section>
 
         <section class="action-section">
-            <button type="submit" id="generateButton">画像を作成してコピー</button>
+            <button type="submit" id="generateButton" aria-describedby="statusMessage">画像を作成</button>
         </section>
 
-        <div id="statusMessage" class="status-message"></div>
+        <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
 
-        <div class="result-container">
-            <img id="resultImage" alt="生成された画像">
+        <div class="result-container" id="resultContainer" style="display: none;">
+            <img id="resultImage" alt="生成された画像" loading="lazy" style="display: none;">
         </div>
 
         <canvas id="imageCanvas" style="display: none;"></canvas>
     </main>
-    
-    <canvas id="imageCanvas" style="display: none;"></canvas>
     <script src="script.js"></script>
+    <script>
+        // PWAのインストール機能
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => console.log('ServiceWorker registered'))
+                .catch(err => console.log('ServiceWorker registration failed'));
+        }
+    </script>
 </body>
 </html>

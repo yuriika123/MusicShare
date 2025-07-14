@@ -4,30 +4,47 @@ const urlInput = document.getElementById('itemURL');
 const statusMessage = document.getElementById('statusMessage');
 const canvas = document.getElementById('imageCanvas');
 const ctx = canvas.getContext('2d');
-const resultImage = document.getElementById('resultImage'); // ★ 追加
+const resultImage = document.getElementById('resultImage');
+const resultContainer = document.getElementById('resultContainer');
+
+let currentImageBlob = null; // 現在の画像データを保存
 
 // ペーストボタンの機能
 document.getElementById('pasteButton').addEventListener('click', async () => {
   try {
-    urlInput.value = await navigator.clipboard.readText();
+    const text = await navigator.clipboard.readText();
+    if (text.includes('music.apple.com')) {
+      urlInput.value = text;
+      statusMessage.textContent = 'URLがペーストされました';
+    } else {
+      statusMessage.textContent = 'Apple MusicのURLをペーストしてください';
+    }
   } catch (err) {
     statusMessage.textContent = 'クリップボードを読み取れませんでした。';
   }
 });
 
 // --- 2. 「作成」ボタンのメイン機能 ---
-// この関数を置き換えてください
 generateButton.addEventListener('click', async (event) => {
   event.preventDefault();
-  const url = urlInput.value;
+  const url = urlInput.value.trim();
+  
   if (!url) {
     statusMessage.textContent = 'URLを入力してください。';
     return;
   }
 
+  if (!url.includes('music.apple.com')) {
+    statusMessage.textContent = 'Apple MusicのURLを入力してください。';
+    return;
+  }
+
+  // ローディング状態の設定
   generateButton.disabled = true;
   generateButton.textContent = '画像生成中...';
+  generateButton.classList.add('loading');
   statusMessage.textContent = '情報を取得しています...';
+  resultContainer.style.display = 'none';
   resultImage.style.display = 'none';
 
   try {
@@ -35,26 +52,40 @@ generateButton.addEventListener('click', async (event) => {
       background: document.querySelector('input[name="backgroundStyle"]:checked').value,
       aspectRatio: document.querySelector('input[name="aspectRatio"]:checked').value,
     };
+    
     const id = extractID(url);
-    if (!id) throw new Error('URLから有効なIDを抽出できませんでした。');
+    if (!id) {
+      throw new Error('URLから有効なIDを抽出できませんでした。Apple Musicの正しいURLを入力してください。');
+    }
+    
     const musicItem = await fetchMusicInfo(id);
+    if (!musicItem) {
+      throw new Error('音楽情報の取得に失敗しました。URLが正しいか確認してください。');
+    }
 
     statusMessage.textContent = '画像を生成しています...';
     const imageBlob = await createImage(settings, musicItem);
-    if (!imageBlob) throw new Error('画像データの生成に失敗しました。');
+    if (!imageBlob) {
+      throw new Error('画像データの生成に失敗しました。');
+    }
     
+    // 画像を表示
     const imageURL = URL.createObjectURL(imageBlob);
     resultImage.src = imageURL;
     resultImage.style.display = 'block';
+    resultContainer.style.display = 'block';
     
     statusMessage.textContent = '画像が生成されました！長押しして保存できます。';
 
   } catch (error) {
     console.error('エラー:', error);
     statusMessage.textContent = `エラー: ${error.message}`;
+    resultContainer.style.display = 'none';
+    resultImage.style.display = 'none';
   } finally {
     generateButton.disabled = false;
-    generateButton.textContent = '画像を作成してコピー';
+    generateButton.textContent = '画像を作成';
+    generateButton.classList.remove('loading');
   }
 });
 
@@ -188,12 +219,32 @@ function extractID(urlString) {
   } catch(e) { return null; }
 }
 async function fetchMusicInfo(id) {
-  const apiURL = `https://itunes.apple.com/lookup?id=${id}&country=jp&lang=ja_jp&entity=song,album`;
-  const response = await fetch(apiURL);
-  if (!response.ok) throw new Error(`APIエラー: ${response.status}`);
-  const data = await response.json();
-  if (data.resultCount === 0) throw new Error('情報が見つかりませんでした。');
-  return data.results[0];
+  try {
+    const apiURL = `https://itunes.apple.com/lookup?id=${id}&country=jp&lang=ja_jp&entity=song,album`;
+    const response = await fetch(apiURL);
+    
+    if (!response.ok) {
+      throw new Error(`APIエラー: ${response.status} - サーバーとの通信に失敗しました`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data || data.resultCount === 0) {
+      throw new Error('音楽情報が見つかりませんでした。URLが正しいか確認してください。');
+    }
+    
+    const item = data.results[0];
+    if (!item.artworkUrl100) {
+      throw new Error('アートワークが見つかりませんでした。');
+    }
+    
+    return item;
+  } catch (error) {
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('インターネット接続を確認してください。');
+    }
+    throw error;
+  }
 }
 
 /**
